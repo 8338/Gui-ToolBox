@@ -6,6 +6,7 @@ $ComboBoxObject = [System.Windows.Forms.ComboBox]
 $ButtonObject = [System.Windows.Forms.Button]
 $TabControlObject = [System.Windows.Forms.TabControl]
 $TabPageObject = [System.Windows.Forms.TabPage]
+$TextBoxObject = [System.Windows.Forms.TextBox]
 $computerName = [System.Environment]::UserName
 
 # GUI
@@ -15,50 +16,50 @@ $AppForm.Text = 'User: ' + $computerName
 
 # GUI no resize
 $AppForm.FormBorderStyle = 'FixedDialog'
-$Appform.MaximizeBox = $false
+$AppForm.MaximizeBox = $false
 
-# Loggide text box
+# Logging text box
 $logBox = New-Object $LabelObject
 $logBox.Text = 'LOGGID'
-$logBox.ForeColor = '#ffffff'
-$logBox.Size = '360,80'
-$logBox.BackColor = '#2D2E40'
+$logBox.ForeColor = [System.Drawing.Color]::White
+$logBox.Size = New-Object System.Drawing.Size(360, 80)
+$logBox.BackColor = [System.Drawing.Color]::FromArgb(45, 46, 64)
 $logBox.Location = New-Object System.Drawing.Point(20, 600)
 
 # Light, Dark theme
 $scheme = 'dark'
 
 if ($scheme -eq 'dark') {
-    $AppForm.BackColor = '#000000'
+    $AppForm.BackColor = [System.Drawing.Color]::Black
 } else {
-    $AppForm.BackColor = '#ffffff'
+    $AppForm.BackColor = [System.Drawing.Color]::White
 }
 
 $schemeButton = New-Object $ButtonObject
 $schemeButton.Text = 'Dark Mode'
-$schemeButton.ForeColor = '#ffffff'
+$schemeButton.ForeColor = [System.Drawing.Color]::White
 $schemeButton.Location = New-Object System.Drawing.Point(20, 680)
 $schemeButton.Size = New-Object System.Drawing.Size(80, 20)
 $schemeButton.Add_Click({
-    if ($scheme -eq 'dark') {
+    if ($script:scheme -eq 'dark') {
         $script:scheme = 'light'
-        $AppForm.BackColor = '#ffffff'
-        $logBox.BackColor = '#f0f0f0'
-        $logBox.ForeColor = '#000000'
-        $schemeButton.ForeColor = '#000000'
+        $AppForm.BackColor = [System.Drawing.Color]::White
+        $logBox.BackColor = [System.Drawing.Color]::FromArgb(240, 240, 240)
+        $logBox.ForeColor = [System.Drawing.Color]::Black
+        $schemeButton.ForeColor = [System.Drawing.Color]::Black
     } else {
         $script:scheme = 'dark'
-        $AppForm.BackColor = '#000000'
-        $logBox.BackColor = '#2D2E40'
-        $logBox.ForeColor = '#ffffff'
-        $schemeButton.ForeColor = '#ffffff'
+        $AppForm.BackColor = [System.Drawing.Color]::Black
+        $logBox.BackColor = [System.Drawing.Color]::FromArgb(45, 46, 64)
+        $logBox.ForeColor = [System.Drawing.Color]::White
+        $schemeButton.ForeColor = [System.Drawing.Color]::White
     }
     $AppForm.Refresh()
 })
 
 # Create TabControl and TabPages
 $tabControl = New-Object $TabControlObject
-$tabControl.Size = '380,500'
+$tabControl.Size = New-Object System.Drawing.Size(380, 500)
 $tabControl.Location = New-Object System.Drawing.Point(10, 10)
 
 $tabPage1 = New-Object $TabPageObject
@@ -69,24 +70,24 @@ $tabPage2.Text = 'Tab 2'
 # Add controls to TabPage1 (System Info tab)
 $systemInfoLabel = New-Object $LabelObject
 $systemInfoLabel.Text = 'Mine Inkognito Tabi:'
-$systemInfoLabel.ForeColor = '#000000'
+$systemInfoLabel.ForeColor = [System.Drawing.Color]::Black
 $systemInfoLabel.Location = New-Object System.Drawing.Point(10, 10)
 $systemInfoLabel.AutoSize = $true
 
 $tabPage1.Controls.Add($systemInfoLabel)
 
 # Add TextBox and Button to TabPage1
-$textBoxInput = New-Object $Textbox
+$textBoxInput = New-Object $TextBoxObject
 $textBoxInput.Location = New-Object System.Drawing.Point(10, 30)
-$textBoxInput.Size = New-Object System.Drawing.Size(350, 30)
+$textBoxInput.Size = New-Object System.Drawing.Size(350, 20)
 $tabPage1.Controls.Add($textBoxInput)
 
 $inputButton = New-Object $ButtonObject
 $inputButton.Text = 'Suundu'
-$inputButton.Location = New-Object System.Drawing.Point(10, 50)
+$inputButton.Location = New-Object System.Drawing.Point(10, 60)
 $inputButton.Size = New-Object System.Drawing.Size(60, 20)
 $inputButton.Add_Click({
-    [System.Diagnostics.Process]::Start("chrome.exe","--incognito $textBoxInput")
+    [System.Diagnostics.Process]::Start("chrome.exe", "--incognito $($textBoxInput.Text)")
 })
 $tabPage1.Controls.Add($inputButton)
 
