@@ -1,0 +1,103 @@
+Add-Type -AssemblyName System.Windows.Forms
+
+$FormObject = [System.Windows.Forms.Form]
+$LabelObject = [System.Windows.Forms.Label]
+$ComboBoxObject = [System.Windows.Forms.ComboBox]
+$ButtonObject = [System.Windows.Forms.Button]
+$TabControlObject = [System.Windows.Forms.TabControl]
+$TabPageObject = [System.Windows.Forms.TabPage]
+$computerName = [System.Environment]::UserName
+
+# GUI
+$AppForm = New-Object $FormObject
+$AppForm.ClientSize = '400,700'
+$AppForm.Text = 'User: ' + $computerName
+
+# GUI no resize
+$AppForm.FormBorderStyle = 'FixedDialog'
+$Appform.MaximizeBox = $false
+
+# Loggide text box
+$logBox = New-Object $LabelObject
+$logBox.Text = 'LOGGID'
+$logBox.ForeColor = '#ffffff'
+$logBox.Size = '360,80'
+$logBox.BackColor = '#2D2E40'
+$logBox.Location = New-Object System.Drawing.Point(20, 600)
+
+# Light, Dark theme
+$scheme = 'dark'
+
+if ($scheme -eq 'dark') {
+    $AppForm.BackColor = '#000000'
+} else {
+    $AppForm.BackColor = '#ffffff'
+}
+
+$schemeButton = New-Object $ButtonObject
+$schemeButton.Text = 'Dark Mode'
+$schemeButton.ForeColor = '#ffffff'
+$schemeButton.Location = New-Object System.Drawing.Point(20, 680)
+$schemeButton.Size = New-Object System.Drawing.Size(80, 20)
+$schemeButton.Add_Click({
+    if ($scheme -eq 'dark') {
+        $script:scheme = 'light'
+        $AppForm.BackColor = '#ffffff'
+        $logBox.BackColor = '#f0f0f0'
+        $logBox.ForeColor = '#000000'
+        $schemeButton.ForeColor = '#000000'
+    } else {
+        $script:scheme = 'dark'
+        $AppForm.BackColor = '#000000'
+        $logBox.BackColor = '#2D2E40'
+        $logBox.ForeColor = '#ffffff'
+        $schemeButton.ForeColor = '#ffffff'
+    }
+    $AppForm.Refresh()
+})
+
+# Create TabControl and TabPages
+$tabControl = New-Object $TabControlObject
+$tabControl.Size = '380,500'
+$tabControl.Location = New-Object System.Drawing.Point(10, 10)
+
+$tabPage1 = New-Object $TabPageObject
+$tabPage1.Text = 'System Info'
+$tabPage2 = New-Object $TabPageObject
+$tabPage2.Text = 'Tab 2'
+
+# Add controls to TabPage1 (System Info tab)
+$systemInfoLabel = New-Object $LabelObject
+$systemInfoLabel.Text = 'Mine Inkognito Tabi:'
+$systemInfoLabel.ForeColor = '#000000'
+$systemInfoLabel.Location = New-Object System.Drawing.Point(10, 10)
+$systemInfoLabel.AutoSize = $true
+
+$tabPage1.Controls.Add($systemInfoLabel)
+
+# Add TextBox and Button to TabPage1
+$textBoxInput = New-Object $Textbox
+$textBoxInput.Location = New-Object System.Drawing.Point(10, 30)
+$textBoxInput.Size = New-Object System.Drawing.Size(350, 30)
+$tabPage1.Controls.Add($textBoxInput)
+
+$inputButton = New-Object $ButtonObject
+$inputButton.Text = 'Suundu'
+$inputButton.Location = New-Object System.Drawing.Point(10, 50)
+$inputButton.Size = New-Object System.Drawing.Size(60, 20)
+$inputButton.Add_Click({
+    [System.Diagnostics.Process]::Start("chrome.exe","--incognito $textBoxInput")
+})
+$tabPage1.Controls.Add($inputButton)
+
+# Add TabPages to TabControl
+$tabControl.TabPages.AddRange(@($tabPage1, $tabPage2))
+
+# Add controls to the form
+$AppForm.Controls.AddRange(@($logBox, $schemeButton, $tabControl))
+
+# Show form
+$AppForm.ShowDialog()
+
+# Clean up
+$AppForm.Dispose()
