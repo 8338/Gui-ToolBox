@@ -7,6 +7,8 @@ $ButtonObject = [System.Windows.Forms.Button]
 $TabControlObject = [System.Windows.Forms.TabControl]
 $TabPageObject = [System.Windows.Forms.TabPage]
 $TextBoxObject = [System.Windows.Forms.TextBox]
+$checkBox = [System.Windows.Forms.CheckBox]
+$PictureBoxObject = [System.Windows.Forms.PictureBox]
 $computerName = [System.Environment]::UserName
 
 # GUI
@@ -18,15 +20,37 @@ $AppForm.Text = 'User: ' + $computerName
 $AppForm.FormBorderStyle = 'FixedDialog'
 $AppForm.MaximizeBox = $false
 
-# Logging text box
+#tekstisisestusala skripti sisendiks
+$Cmdinp = New-Object $TextBoxObject
+$Cmdinp.Size = New-Object System.Drawing.Size(360, 40) # increased height
+$Cmdinp.ForeColor = [System.Drawing.Color]::Yellow
+$Cmdinp.Location = New-Object System.Drawing.Point(20, 520) # adjusted location
+$Cmdinp.BackColor = '#050766'
+$Cmdinp.Multiline = $true # allow multiple lines of input
+
+$executeButton = New-Object $ButtonObject
+$executeButton.Text = 'Execute'
+$executeButton.ForeColor = [System.Drawing.Color]::White
+$executeButton.Location = New-Object System.Drawing.Point(20, 560)
+$executeButton.Size = New-Object System.Drawing.Size(80, 20)
+$executeButton.Add_Click({
+    $command = $Cmdinp.Text
+    try {
+        Invoke-Expression $command
+    } catch {
+        Write-Host "Error: $_" -ForegroundColor Red
+    }
+})
+
+# tekstikast CLI valjundiks text box
 $logBox = New-Object $LabelObject
-$logBox.Text = 'LOGGID'
+$logBox.Text = 'tekstikast CLI valjundiks'
 $logBox.ForeColor = [System.Drawing.Color]::White
 $logBox.Size = New-Object System.Drawing.Size(360, 80)
 $logBox.BackColor = [System.Drawing.Color]::FromArgb(45, 46, 64)
 $logBox.Location = New-Object System.Drawing.Point(20, 600)
 
-# Light, Dark theme
+# Valge ja tume teema guile
 $scheme = 'dark'
 
 if ($scheme -eq 'dark') {
@@ -45,10 +69,12 @@ $schemeButton.Add_Click({
         $script:scheme = 'light'
         $AppForm.BackColor = [System.Drawing.Color]::White
         $logBox.BackColor = [System.Drawing.Color]::FromArgb(240, 240, 240)
+        $executeButton.ForeColor = [System.Drawing.Color]::Black
         $logBox.ForeColor = [System.Drawing.Color]::Black
         $schemeButton.ForeColor = [System.Drawing.Color]::Black
     } else {
         $script:scheme = 'dark'
+        $executeButton.ForeColor = [System.Drawing.Color]::White
         $AppForm.BackColor = [System.Drawing.Color]::Black
         $logBox.BackColor = [System.Drawing.Color]::FromArgb(45, 46, 64)
         $logBox.ForeColor = [System.Drawing.Color]::White
@@ -57,30 +83,28 @@ $schemeButton.Add_Click({
     $AppForm.Refresh()
 })
 
-# Create TabControl and TabPages
+# Teeb erinevad tabid
 $tabControl = New-Object $TabControlObject
 $tabControl.Size = New-Object System.Drawing.Size(380, 500)
 $tabControl.Location = New-Object System.Drawing.Point(10, 10)
 
 $tabPage1 = New-Object $TabPageObject
-$tabPage1.Text = 'System Info'
+$tabPage1.Text = 'Internet'
 $tabPage2 = New-Object $TabPageObject
-$tabPage2.Text = 'Tab 2'
+$tabPage2.Text = 'Install'
+$tabPage3 = New-Object $TabPageObject
+$tabPage3.text = 'Help'
 
-# Add controls to TabPage1 (System Info tab)
+# Internet TAB
 $systemInfoLabel = New-Object $LabelObject
 $systemInfoLabel.Text = 'Mine Inkognito Tabi:'
 $systemInfoLabel.ForeColor = [System.Drawing.Color]::Black
 $systemInfoLabel.Location = New-Object System.Drawing.Point(10, 10)
 $systemInfoLabel.AutoSize = $true
 
-$tabPage1.Controls.Add($systemInfoLabel)
-
-# Add TextBox and Button to TabPage1
 $textBoxInput = New-Object $TextBoxObject
 $textBoxInput.Location = New-Object System.Drawing.Point(10, 30)
 $textBoxInput.Size = New-Object System.Drawing.Size(350, 20)
-$tabPage1.Controls.Add($textBoxInput)
 
 $inputButton = New-Object $ButtonObject
 $inputButton.Text = 'Suundu'
@@ -89,16 +113,146 @@ $inputButton.Size = New-Object System.Drawing.Size(60, 20)
 $inputButton.Add_Click({
     [System.Diagnostics.Process]::Start("chrome.exe", "--incognito $($textBoxInput.Text)")
 })
-$tabPage1.Controls.Add($inputButton)
 
-# Add TabPages to TabControl
-$tabControl.TabPages.AddRange(@($tabPage1, $tabPage2))
+$systemInfoLabel1 = New-Object $LabelObject
+$systemInfoLabel1.Text = 'Vali veebileht:'
+$systemInfoLabel1.ForeColor = [System.Drawing.Color]::Black
+$systemInfoLabel1.Location = New-Object System.Drawing.Point(10, 100)
+$systemInfoLabel1.AutoSize = $true
 
-# Add controls to the form
-$AppForm.Controls.AddRange(@($logBox, $schemeButton, $tabControl))
+$Valmisurl = New-Object $ComboBoxObject
+$Valmisurl.Location = New-Object System.Drawing.Point(10, 120)
+$Valmisurl.Size = New-Object System.Drawing.Size(350, 20)
+$Valmisurl.Items.Add("Roblox")
+$Valmisurl.Items.Add("Youtube")
+$Valmisurl.Items.Add("Alibaba")
+$Valmisurl.Items.Add("Temu")
+$Valmisurl.Items.Add("Aliexpress")
 
-# Show form
+$inputButton1 = New-Object $ButtonObject
+$inputButton1.Text = 'Suundu'
+$inputButton1.Location = New-Object System.Drawing.Point(10, 150)
+$inputButton1.Size = New-Object System.Drawing.Size(60, 20)
+$inputButton1.Add_Click({
+    $selectedWebsite = $Valmisurl.SelectedItem
+    if ($selectedWebsite -eq "Roblox") {
+        [System.Diagnostics.Process]::Start("https://www.roblox.com")
+    } elseif ($selectedWebsite -eq "Youtube") {
+        [System.Diagnostics.Process]::Start("https://www.youtube.com")
+    } elseif ($selectedWebsite -eq "Alibaba") {
+        [System.Diagnostics.Process]::Start("https://www.alibaba.com")
+    } elseif ($selectedWebsite -eq "Temu") {
+        [System.Diagnostics.Process]::Start("https://www.temu.com")
+    } elseif ($selectedWebsite -eq "Aliexpress") {
+        [System.Diagnostics.Process]::Start("https://www.aliexpress.com")
+    }
+})
+
+$tabPage1.Controls.AddRange(@($inputButton,$Valmisurl,$inputButton1,$systemInfoLabel,$textBoxInput,$systemInfoLabel1))
+
+#INSTALLerite tab
+$CheckBox1 = New-Object $checkBox
+$CheckBox1.Text = "Chrome"
+$CheckBox1.Location = New-Object System.Drawing.Point(20, 20)
+
+$CheckBox2 = New-Object $checkBox
+$CheckBox2.Text = "7zip"
+$CheckBox2.Location = New-Object System.Drawing.Point(20, 40)
+
+$CheckBox3 = New-Object $checkBox
+$CheckBox3.Text = "WinRaR"
+$CheckBox3.Location = New-Object System.Drawing.Point(20, 60)
+
+$CheckBox4 = New-Object $checkBox
+$CheckBox4.Text = "Notepad++"
+$CheckBox4.Location = New-Object System.Drawing.Point(20, 80)
+
+$CheckBox5 = New-Object $checkBox
+$CheckBox5.Text = "Firefox"
+$CheckBox5.Location = New-Object System.Drawing.Point(20, 100)
+
+$Installer= New-Object $ButtonObject
+$Installer.Text = 'Install'
+$Installer.Location = New-Object System.Drawing.Point(20, 130)
+$Installer.Size = New-Object System.Drawing.Size(60, 20)
+$Installer.Add_Click({
+    $checkedPrograms = @()
+    if ($CheckBox1.Checked) { $checkedPrograms += "Chrome" }
+    if ($CheckBox2.Checked) { $checkedPrograms += "7zip" }
+    if ($CheckBox3.Checked) { $checkedPrograms += "WinRaR" }
+    if ($CheckBox4.Checked) { $checkedPrograms += "Notepad++" }
+    if ($CheckBox5.Checked) { $checkedPrograms += "Firefox" }
+
+    foreach ($program in $checkedPrograms) {
+        switch ($program) {
+            "Chrome" {
+                $url = "https://dl.google.com/tag/s/dl/chrome/install/googlechromestandaloneenterprise64.msi"
+                $silentSwitch = "/qn /norestart"
+                $installerPath = "googlechromestandaloneenterprise64.msi"
+                break
+            }
+            "7zip" {
+                $url = "https://www.7-zip.org/a/7z2200-x64.msi"
+                $silentSwitch = "/qn /norestart"
+                $installerPath = "7z2200-x64.msi"
+                break
+            }
+            "WinRaR" {
+                $url = "https://www.rarlab.com/rar/winrar-x64-700.exe"
+                $silentSwitch = "/S"
+                $installerPath = "winrar-x64-700.exe"
+                break
+            }
+            "Notepad++" {
+                $url = "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.6.7/npp.8.6.7.Installer.x64.exe"
+                $silentSwitch = "" #notepadil ei leidnud seda
+                $installerPath = "npp.8.6.7.Installer.x64.exe"
+                break
+            }
+            "Firefox" {
+                $url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/125.0.2/win64/en-US/Firefox%20Setup%20125.0.2.exe"
+                $silentSwitch = "/S /PreventRebootRequired=true"
+                $installerPath = "Firefox Setup_125.0.2_x64.exe"
+                break
+            }
+        }
+
+        # Laeb installerid 
+        $installerPath = Join-Path -Path $env:TEMP -ChildPath $installerPath
+        Invoke-WebRequest -Uri $url -OutFile $installerPath
+
+        # Paneb processi toole ja laeb selle
+        Start-Process -FilePath $installerPath -ArgumentList $silentSwitch -Wait
+    }
+})
+
+$tabPage2.Controls.AddRange(@($CheckBox1,$Checkbox2,$CheckBox3,$CheckBox4,$CheckBox5,$Installer))
+
+#HELP TAB
+$MinuSite = New-Object $ButtonObject
+$MinuSite.Text = 'Github'
+$MinuSite.ForeColor = [System.Drawing.Color]::Black
+$MinuSite.Location = New-Object System.Drawing.Point(10, 10)
+$MinuSite.AutoSize = $true
+$MinuSite.Add_Click({
+    [System.Diagnostics.Process]::Start("chrome.exe", " $('https://github.com/8338/Gui-ToolBox/tree/main')")
+})
+
+#$helpImage = New-Object $PictureBoxObject
+#$helpImage.Location = New-Object System.Drawing.Point(10, 40)
+#$helpImage.Size = New-Object System.Drawing.Size(200, 290)
+#$helpImage.Image = [System.Drawing.Image]::FromFile("https://github.com/8338/Gui-ToolBox/blob/main/lolkekw.png")
+
+$tabPage3.Controls.AddRange(@($MinuSite))
+
+# PEIDA Või LISA TABID
+$tabControl.TabPages.AddRange(@($tabPage1, $tabPage2, $tabPage3))
+
+# PEIDA VÕI LISA TEISED ASJAD
+$AppForm.Controls.AddRange(@($logBox, $schemeButton, $tabControl, $Cmdinp, $executeButton))
+
+# NÄITA FORMI
 $AppForm.ShowDialog()
 
-# Clean up
+# Vabastab kasutatud ressursid pärast akna sulgemist
 $AppForm.Dispose()
