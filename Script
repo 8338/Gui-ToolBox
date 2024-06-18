@@ -17,8 +17,8 @@ $AppForm.ClientSize = '400,700'
 $AppForm.Text = 'User: ' + $computerName
 
 # GUI no resize
-$AppForm.FormBorderStyle = 'FixedDialog'
-$AppForm.MaximizeBox = $false
+#$AppForm.FormBorderStyle = 'FixedDialog'
+#$AppForm.MaximizeBox = $false
 
 #tekstisisestusala skripti sisendiks
 $Cmdinp = New-Object $TextBoxObject
@@ -43,12 +43,27 @@ $executeButton.Add_Click({
 })
 
 # tekstikast CLI valjundiks text box
-$logBox = New-Object $LabelObject
-$logBox.Text = 'tekstikast CLI valjundiks'
+$logBox = New-Object $TextBoxObject
+$logBox.Text = ''
 $logBox.ForeColor = [System.Drawing.Color]::White
 $logBox.Size = New-Object System.Drawing.Size(360, 80)
 $logBox.BackColor = [System.Drawing.Color]::FromArgb(45, 46, 64)
 $logBox.Location = New-Object System.Drawing.Point(20, 600)
+$logBox.Multiline = $true
+$logBox.WordWrap = $false
+$logBox.ReadOnly = $true
+
+$executeButton.Add_Click({
+    $command = $Cmdinp.Text
+    try {
+        Invoke-Expression $command
+        $logBox.AppendText("Command executed successfully`n")
+        $logBox.ScrollToCaret()
+    } catch {
+        $logBox.AppendText("Error: $_`n")
+        $logBox.ScrollToCaret()
+    }
+})
 
 # Valge ja tume teema guile
 $scheme = 'dark'
@@ -238,12 +253,57 @@ $MinuSite.Add_Click({
     [System.Diagnostics.Process]::Start("chrome.exe", " $('https://github.com/8338/Gui-ToolBox/tree/main')")
 })
 
+$Button1 = New-Object $ButtonObject
+$Button1.Text = 'Task Manager'
+$Button1.ForeColor = [System.Drawing.Color]::Black
+$Button1.Location = New-Object System.Drawing.Point(10, 380)
+$Button1.AutoSize = $true
+$Button1.Add_Click({
+    [System.Diagnostics.Process]::Start("taskmgr.exe")
+})
+
+$Button2 = New-Object $ButtonObject
+$Button2.Text = 'C:\'
+$Button2.ForeColor = [System.Drawing.Color]::Black
+$Button2.Location = New-Object System.Drawing.Point(10, 400)
+$Button2.AutoSize = $true
+$Button2.Add_Click({
+    [System.Diagnostics.Process]::Start("explorer.exe", "$('c:\')")
+})
+
+$Button3 = New-Object $ButtonObject
+$Button3.Text = 'StartUp'
+$Button3.ForeColor = [System.Drawing.Color]::Black
+$Button3.Location = New-Object System.Drawing.Point(10, 420)
+$Button3.AutoSize = $true
+$Button3.Add_Click({
+    [System.Diagnostics.Process]::Start("shell:startup")
+})
+
+$Button4 = New-Object $ButtonObject
+$Button4.Text = 'Shutdown'
+$Button4.ForeColor = [System.Drawing.Color]::Black
+$Button4.Location = New-Object System.Drawing.Point(280, 380)
+$Button4.AutoSize = $true
+$Button4.Add_Click({
+    [System.Diagnostics.Process]::Start("shutdown /s")
+})
+
+$Button5 = New-Object $ButtonObject
+$Button5.Text = 'Restart'
+$Button5.ForeColor = [System.Drawing.Color]::Black
+$Button5.Location = New-Object System.Drawing.Point(280, 400)
+$Button5.AutoSize = $true
+$Button5.Add_Click({
+    [System.Diagnostics.Process]::Start("shutdown /r")
+})
+
 #$helpImage = New-Object $PictureBoxObject
 #$helpImage.Location = New-Object System.Drawing.Point(10, 40)
 #$helpImage.Size = New-Object System.Drawing.Size(200, 290)
 #$helpImage.Image = [System.Drawing.Image]::FromFile("https://github.com/8338/Gui-ToolBox/blob/main/lolkekw.png")
 
-$tabPage3.Controls.AddRange(@($MinuSite))
+$tabPage3.Controls.AddRange(@($MinuSite,$Button1,$Button2,$Button3,$Button4,$Button5))
 
 # PEIDA Või LISA TABID
 $tabControl.TabPages.AddRange(@($tabPage1, $tabPage2, $tabPage3))
