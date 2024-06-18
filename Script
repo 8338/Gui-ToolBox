@@ -109,6 +109,8 @@ $tabPage2 = New-Object $TabPageObject
 $tabPage2.Text = 'Install'
 $tabPage3 = New-Object $TabPageObject
 $tabPage3.text = 'Help'
+$tabPage4 = New-Object $TabPageObject
+$tabPage4.text = 'Services'
 
 # Internet TAB
 $systemInfoLabel = New-Object $LabelObject
@@ -302,6 +304,58 @@ $Button5.Add_Click({
     }
 })
 
+#Services
+
+$labelService=New-Object $LabelObject
+$labelService.Text='Services :'
+$labelService.AutoSize=$true
+$labelService.Location=New-Object System.Drawing.Point(20,20)
+
+$ddlService=New-Object $ComboBoxObject
+$ddlService.Width='200'
+$ddlService.Location=New-Object System.Drawing.Point(120,20)
+
+Get-Service | ForEach-Object {$ddlService.Items.Add($_.Name)}
+
+$ddlService.Text='Pick a Service'
+
+$labelForName=New-Object $LabelObject
+$labelForName.Text='Service Firendly Name :'
+$labelForName.AutoSize=$true
+$labelForName.Location=New-Object System.Drawing.Point(20,80)
+
+$labelName=New-Object $LabelObject
+$labelName.Text=''
+$labelName.AutoSize=$true
+$labelName.Location=New-Object System.Drawing.Point(230,80)
+
+$labelForStatus=New-Object $LabelObject
+$labelForStatus.Text='Status :'
+$labelForStatus.AutoSize=$true
+$labelForStatus.Location=New-Object System.Drawing.Point(20,140)
+
+$labelStatus=New-Object $LabelObject
+$labelStatus.Text=''
+$labelStatus.AutoSize=$true
+$labelStatus.Location=New-Object System.Drawing.Point(100,140)
+
+function GetServiceDetails{
+    $ServiceName=$ddlService.SelectedItem
+    $details=Get-Service -Name $ServiceName | select *
+    $labelName.Text=$details.name
+    $labelstatus.Text=$details.status
+
+    if($labelstatus.Text -eq 'Running'){
+        $labelstatus.ForeColor='Green'
+    }else{
+        $labelstatus.ForeColor='Red'
+    }
+}
+
+$ddlService.Add_SelectedIndexChanged({GetServiceDetails})
+
+$tabPage4.Controls.AddRange(@($labelService,$ddlService,$labelForName,$labelName,$labelForStatus,$labelStatus))
+
 #$helpImage = New-Object $PictureBoxObject
 #$helpImage.Location = New-Object System.Drawing.Point(10, 40)
 #$helpImage.Size = New-Object System.Drawing.Size(200, 290)
@@ -310,7 +364,7 @@ $Button5.Add_Click({
 $tabPage3.Controls.AddRange(@($MinuSite,$Button1,$Button2,$Button3,$Button4,$Button5))
 
 # PEIDA Või LISA TABID
-$tabControl.TabPages.AddRange(@($tabPage1, $tabPage2, $tabPage3))
+$tabControl.TabPages.AddRange(@($tabPage1, $tabPage2, $tabPage3,$tabPage4))
 
 # PEIDA VÕI LISA TEISED ASJAD
 $AppForm.Controls.AddRange(@($logBox, $schemeButton, $tabControl, $Cmdinp, $executeButton))
