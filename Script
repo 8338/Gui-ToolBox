@@ -285,8 +285,10 @@ $Button4.Text = 'Shutdown'
 $Button4.ForeColor = [System.Drawing.Color]::Black
 $Button4.Location = New-Object System.Drawing.Point(280, 380)
 $Button4.AutoSize = $true
-$Button4.Add_Click({
-    [System.Diagnostics.Process]::Start("shutdown /s")
+$Button5.Add_Click({
+    if ([System.Windows.Forms.MessageBox]::Show("Are you sure you want to shutdown?", "Shutdown", [System.Windows.Forms.MessageBoxButtons]::YesNo) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        [System.Diagnostics.Process]::Start("shutdown", "/s /f /t 0")
+    }
 })
 
 $Button5 = New-Object $ButtonObject
@@ -295,7 +297,9 @@ $Button5.ForeColor = [System.Drawing.Color]::Black
 $Button5.Location = New-Object System.Drawing.Point(280, 400)
 $Button5.AutoSize = $true
 $Button5.Add_Click({
-    [System.Diagnostics.Process]::Start("shutdown /r")
+    if ([System.Windows.Forms.MessageBox]::Show("Are you sure you want to restart?", "Restart", [System.Windows.Forms.MessageBoxButtons]::YesNo) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        [System.Diagnostics.Process]::Start("shutdown", "/r /t 0")
+    }
 })
 
 #$helpImage = New-Object $PictureBoxObject
