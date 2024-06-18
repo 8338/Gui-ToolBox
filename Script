@@ -17,8 +17,8 @@ $AppForm.ClientSize = '400,700'
 $AppForm.Text = 'User: ' + $computerName
 
 # GUI no resize
-#$AppForm.FormBorderStyle = 'FixedDialog'
-#$AppForm.MaximizeBox = $false
+$AppForm.FormBorderStyle = 'FixedDialog'
+$AppForm.MaximizeBox = $false
 
 #tekstisisestusala skripti sisendiks
 $Cmdinp = New-Object $TextBoxObject
@@ -56,10 +56,12 @@ $logBox.ReadOnly = $true
 $executeButton.Add_Click({
     $command = $Cmdinp.Text
     try {
-        Invoke-Expression $command
-        $logBox.AppendText("Command executed successfully`n")
+        Invoke-Expression -Command $command | Tee-Object -Variable output | Out-String | Write-Host -ForegroundColor White -NoNewline
+        $logBox.Text = $logBox.Text + $output
+        Write-Host "Command executed successfully`n" -ForegroundColor Green
         $logBox.ScrollToCaret()
     } catch {
+        Write-Host "Error: $_`n" -ForegroundColor Red
         $logBox.AppendText("Error: $_`n")
         $logBox.ScrollToCaret()
     }
